@@ -63,7 +63,7 @@ function App() {
 
     try {
       // Make an API call
-      const response = await axios.post('http://localhost:8000/calculate', payload);
+      const response = await axios.post('https://calculatorserver01.onrender.com/calculate', payload);
       setTcoData(response.data); // Set the TCO data from the response
       setIsLoading(false);
       setFormValid(true); // Set form as valid only after the API call succeeds
