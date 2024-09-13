@@ -11,7 +11,7 @@ function App() {
   const [icePrice, setIcePrice] = useState(1500000);
   const [iceMileage, setIceMileage] = useState(10);
   const [fuelCost, setFuelCost] = useState(100);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [evPrice, setEvPrice] = useState(2000000);
   const [evRange, setEvRange] = useState(200);
   const [batteryCapacity, setBatteryCapacity] = useState(30);
@@ -27,6 +27,7 @@ function App() {
   const [formValid, setFormValid] = useState(false); // State to track form validation
 
   const handleClick = async () => {
+    setIsLoading(true); 
     // Input validation
     if (
       icePrice <= 0 ||
@@ -62,8 +63,9 @@ function App() {
 
     try {
       // Make an API call
-      const response = await axios.post('https://calculatorserver.onrender.com/calculate', payload);
+      const response = await axios.post('http://localhost:8000/calculate', payload);
       setTcoData(response.data); // Set the TCO data from the response
+      setIsLoading(false);
       setFormValid(true); // Set form as valid only after the API call succeeds
     } catch (error) {
       console.error('Error fetching TCO data', error);
@@ -276,13 +278,19 @@ function App() {
     </div>
   
     <div className="flex justify-center mt-8">
-      <button 
-        onClick={handleClick} 
-        className="px-5 py-3 bg-gradient-to-r from-blue-500 to-teal-500 text-white font-bold rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition duration-300"
-      >
-        Calculate
-      </button>
-    </div>
+        <button 
+          onClick={handleClick} 
+          className="px-5 py-3 bg-gradient-to-r from-blue-500 to-teal-500 text-white font-bold rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition duration-300 flex items-center justify-center"
+          disabled={isLoading} // Disable button while loading
+        >
+          {isLoading ? (
+            <svg className="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0H4z"></path>
+            </svg>
+          ) : 'Calculate'}
+        </button>
+      </div>
   
     {/* Conditional render of the ResultComponent */}
     {formValid && tcoData && <ResultComponent tcoData={tcoData} />}
